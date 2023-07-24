@@ -29,6 +29,9 @@ async function run() {
     const collegeCollection = client.db("EduHubDB").collection("colleges");
     const researchCollection = client.db("EduHubDB").collection("journals");
     const reviewsCollection = client.db("EduHubDB").collection("reviews");
+    const admissionCollection = client
+      .db("EduHubDB")
+      .collection("admissionInfo");
 
     app.get("/colleges", async (req, res) => {
       const result = await collegeCollection.find().toArray();
@@ -42,6 +45,28 @@ async function run() {
 
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/admissions", async (req, res) => {
+      const items = req.body;
+      console.log(items);
+      const result = await admissionCollection.insertOne(items);
+      res.send(result);
+    });
+
+    app.post("/reviews", async (req, res) => {
+      const items = req.body;
+      console.log(items);
+      const result = await reviewsCollection.insertOne(items);
+      res.send(result);
+    });
+
+    app.get("/myadmission", async (req, res) => {
+      const email = req.query;
+      const query = { user_email: email.email };
+      console.log(query);
+      const result = await admissionCollection.findOne(query);
       res.send(result);
     });
 
