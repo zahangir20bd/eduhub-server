@@ -26,12 +26,24 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const usersCollection = client.db("EduHubDB").collection("users");
     const collegeCollection = client.db("EduHubDB").collection("colleges");
     const researchCollection = client.db("EduHubDB").collection("journals");
     const reviewsCollection = client.db("EduHubDB").collection("reviews");
     const admissionCollection = client
       .db("EduHubDB")
       .collection("admissionInfo");
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const query = { user_email: user.user_email };
+      const existingUser = await usersCollection.findOne(query);
+      if (existingUser) {
+        return res.send({ message: "User already exists" });
+      }
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
 
     app.get("/colleges", async (req, res) => {
       const result = await collegeCollection.find().toArray();
